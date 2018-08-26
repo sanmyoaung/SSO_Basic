@@ -16,8 +16,8 @@ class m180826_151647_create_table_movie extends Migration
             'id' => $this->primaryKey()->unsigned(),
             'name_en' => $this->string(80)->notNull(),
             'name_mm' => $this->string(255)->notNull(),
-            'genre_id' => $this->integer(10)->notNull(),
-            'rating_id' => $this->integer( 10)->notNull(),
+            'genre_id' => $this->integer()->unsigned()->notNull(),
+            'rating_id' => $this->integer()->unsigned()->notNull(),
             'duration' => $this->integer(4)->notNull(),
             'released' => $this->timestamp()->notNull(),
             'awards_eng' => $this->text()->notNull(),
@@ -37,6 +37,9 @@ class m180826_151647_create_table_movie extends Migration
             'trailer' => $this->string(255)->notNull(),
             'fullvideo' => $this->string(255)->notNull(),
         ]);
+
+        $this->createIndex('idx_movie_genre_id_genre', 'movie', 'genre_id');
+        $this->addForeignKey('fk_movie_genre_id_genre', 'movie', 'genre_id', 'genre', 'id', 'restrict', 'cascade');
     }
 
     /**
@@ -44,7 +47,10 @@ class m180826_151647_create_table_movie extends Migration
      */
     public function safeDown()
     {
-       $this->dropTable('movie');
+        $this->dropForeignKey('fk_movie_genre_id_genre', 'movie');
+        $this->dropIndex('idx_movie_genre_id_genre', 'movie');
+
+        $this->dropTable('movie');
     }
 
     /*
